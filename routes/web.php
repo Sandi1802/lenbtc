@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MasterDataController;
 use App\Http\Controllers\LogController;
+use App\Http\Controllers\ProcurementController;
+use App\Models\Procurement;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,8 +30,18 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        $totalProcurement = Procurement::count();
+        $avgProgress = Procurement::all()->avg(fn($p) => $p->progress_percentage);
+        $avgProgress = round($avgProgress ?? 0);
+        return view('dashboard', compact('totalProcurement', 'avgProgress'));
     });
+
+    Route::get('/procurement', [ProcurementController::class, 'index']);
+    Route::post('/procurement', [ProcurementController::class, 'store']);
+    Route::get('/procurement/create', [ProcurementController::class, 'create']);
+    Route::get('/procurement/{id}', [ProcurementController::class, 'show']);
+    Route::post('/procurement/{id}', [ProcurementController::class, 'update']);
+    Route::delete('/procurement/{id}', [ProcurementController::class, 'destroy']);
 
     // Master Data
     Route::prefix('master-data')->group(function () {

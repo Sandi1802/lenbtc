@@ -7,11 +7,12 @@
     <div class="overview-grid" style="margin-bottom: 2rem;">
         <div class="col-span-3 card" style="border-left: 4px solid var(--len-red); display: flex; align-items: center; gap: 1rem;">
             <div class="icon-box red" style="width: 48px; height: 48px;">
-                <i class="ph ph-boat" style="font-size: 1.5rem;"></i>
+                <i class="ph ph-shopping-cart" style="font-size: 1.5rem;"></i>
             </div>
             <div>
                 <div class="stat-label">Procurement</div>
-                <div class="stat-value">80%</div>
+                <div class="stat-value">{{ $totalProcurement }} Data</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Avg. Progress: {{ $avgProgress }}%</div>
             </div>
         </div>
         <div class="col-span-3 card" style="border-left: 4px solid var(--primary); display: flex; align-items: center; gap: 1rem;">
@@ -69,41 +70,37 @@
   <!-- Script for Charts -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Read theme AFTER it has been applied (early script in <head> ensures this is correct)
         const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        const textColor = isDark ? '#f8fafc' : '#1e293b';
-        const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+        const textColor = isDark ? '#F1F5F9' : '#1e293b';
+        const mutedColor = isDark ? '#94A3B8' : '#64748B';
+        const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+        const cardBg = isDark ? '#1E293B' : '#ffffff';
 
-        // Pie Chart Configuration
+        // Apply Chart.js global defaults so ALL charts inherit correct colors
+        Chart.defaults.color = textColor;
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.font.size = 13;
+
+        // ---- PIE CHART ----
         const pieCtx = document.getElementById('progressPieChart').getContext('2d');
         new Chart(pieCtx, {
             type: 'pie',
             data: {
                 labels: ['Procurement', 'Engineering', 'Construction', 'Commissioning'],
                 datasets: [{
-                    data: [40, 30, 20, 10], // Example data
-                    backgroundColor: [
-                    '#A40917', // Procurement — merah maroon vivid (slice terbesar)
-                    '#E42313', // Engineering — merah-oranye terang
-                    '#C40D0E', // Construction — merah medium terang
-                    '#FF6121'  // Commissioning — oranye vivid (slice terkecil)
-                ],
-                hoverBackgroundColor: [
-                    '#8A0713',
-                    '#C71E10',
-                    '#A80B0C',
-                    '#E5551C'
-                ],
+                    data: [{{ $avgProgress }}, 30, 20, 10],
+                    backgroundColor: ['#A40917', '#E42313', '#C40D0E', '#FF6121'],
+                    hoverBackgroundColor: ['#8A0713', '#C71E10', '#A80B0C', '#E5551C'],
                     borderWidth: 3,
-                    borderColor: isDark ? '#0f172a' : '#ffffff',
+                    borderColor: cardBg,
                     hoverOffset: 8
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                layout: {
-                    padding: { bottom: 10 }
-                },
+                layout: { padding: { bottom: 10 } },
                 plugins: {
                     legend: {
                         position: 'bottom',
@@ -112,39 +109,30 @@
                             usePointStyle: true,
                             pointStyle: 'circle',
                             padding: 20,
-                            font: {
-                                family: "'Inter', sans-serif",
-                                size: 13,
-                                weight: 500
-                            }
+                            font: { family: "'Inter', sans-serif", size: 13, weight: '500' }
                         }
                     },
                     tooltip: {
-                        backgroundColor: isDark ? 'rgba(30, 41, 59, 0.9)' : 'rgba(255, 255, 255, 0.9)',
-                        titleColor: isDark ? '#f8fafc' : '#1e293b',
-                        bodyColor: isDark ? '#f8fafc' : '#1e293b',
-                        borderColor: gridColor,
+                        backgroundColor: isDark ? 'rgba(15,23,42,0.95)' : 'rgba(255,255,255,0.95)',
+                        titleColor: textColor,
+                        bodyColor: textColor,
+                        borderColor: isDark ? '#334155' : '#e2e8f0',
                         borderWidth: 1,
                         padding: 10,
                         boxPadding: 4,
                         usePointStyle: true,
                         callbacks: {
                             label: function(context) {
-                                return ' ' + context.label + ': ' + context.raw + '%';
+                                return '  ' + context.label + ': ' + context.raw + '%';
                             }
                         }
                     }
                 },
-                animation: {
-                    animateRotate: true,
-                    animateScale: true,
-                    duration: 800,
-                    easing: 'easeOutQuart'
-                }
+                animation: { animateRotate: true, animateScale: true, duration: 800, easing: 'easeOutQuart' }
             }
         });
 
-        // S-Curve Line Chart Configuration
+        // ---- S-CURVE LINE CHART ----
         const sCurveCtx = document.getElementById('sCurveChart').getContext('2d');
         new Chart(sCurveCtx, {
             type: 'line',
@@ -154,25 +142,26 @@
                     {
                         label: 'Plan',
                         data: [5, 10, 20, 35, 50, 65, 80, 90, 95, 98, 99, 100],
-                        borderColor: '#2563EB',
-                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                        borderWidth: 2,
+                        borderColor: '#60A5FA',
+                        backgroundColor: 'rgba(96,165,250,0.08)',
+                        borderWidth: 2.5,
                         tension: 0.4,
                         fill: true,
                         pointRadius: 3,
-                        pointHoverRadius: 5
+                        pointHoverRadius: 6,
+                        pointBackgroundColor: '#60A5FA'
                     },
                     {
                         label: 'Actual',
                         data: [2, 8, 15, 25, 40, 45, 55, null, null, null, null, null],
                         borderColor: '#E31837',
                         backgroundColor: 'transparent',
-                        borderWidth: 2,
-                        borderDash: [5, 5],
+                        borderWidth: 2.5,
+                        borderDash: [6, 4],
                         tension: 0.4,
                         fill: false,
                         pointRadius: 4,
-                        pointHoverRadius: 6,
+                        pointHoverRadius: 7,
                         pointBackgroundColor: '#E31837'
                     }
                 ]
@@ -180,52 +169,50 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                interaction: {
-                    mode: 'index',
-                    intersect: false,
-                },
+                interaction: { mode: 'index', intersect: false },
                 plugins: {
                     legend: {
                         position: 'top',
                         align: 'end',
                         labels: {
                             color: textColor,
-                            font: {
-                                family: "'Inter', sans-serif"
-                            }
+                            usePointStyle: true,
+                            pointStyle: 'line',
+                            padding: 20,
+                            font: { family: "'Inter', sans-serif", size: 13 }
                         }
                     },
                     tooltip: {
+                        backgroundColor: isDark ? 'rgba(15,23,42,0.95)' : 'rgba(255,255,255,0.95)',
+                        titleColor: textColor,
+                        bodyColor: textColor,
+                        borderColor: isDark ? '#334155' : '#e2e8f0',
+                        borderWidth: 1,
+                        padding: 12,
                         callbacks: {
                             label: function(context) {
-                                return context.dataset.label + ': ' + context.raw + '%';
+                                if (context.raw === null) return null;
+                                return '  ' + context.dataset.label + ': ' + context.raw + '%';
                             }
                         }
                     }
                 },
                 scales: {
                     x: {
-                        grid: {
-                            color: gridColor,
-                            drawBorder: false
-                        },
-                        ticks: {
-                            color: textColor
-                        }
+                        grid: { color: gridColor, drawBorder: false },
+                        ticks: { color: mutedColor, font: { size: 12 } },
+                        border: { color: gridColor }
                     },
                     y: {
                         min: 0,
                         max: 100,
-                        grid: {
-                            color: gridColor,
-                            drawBorder: false
-                        },
+                        grid: { color: gridColor, drawBorder: false },
                         ticks: {
-                            color: textColor,
-                            callback: function(value) {
-                                return value + '%';
-                            }
-                        }
+                            color: mutedColor,
+                            font: { size: 12 },
+                            callback: function(value) { return value + '%'; }
+                        },
+                        border: { color: gridColor }
                     }
                 }
             }
@@ -242,32 +229,32 @@
             <div style="flex: 1; overflow-y: auto; padding-right: 0.5rem; display: flex; flex-direction: column; gap: 1rem;">
                 
                 <!-- Item 1 -->
-                <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
-                    <div style="font-weight: 600; font-size: 0.85rem; margin-bottom: 0.5rem; line-height: 1.4;">[Tabel Perbaikan] Developer baru saja merubah status temuan produk NusantaraX.</div>
+                <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem;">
+                    <div style="font-weight: 600; font-size: 0.85rem; margin-bottom: 0.5rem; line-height: 1.4; color: var(--text-main);">[Tabel Perbaikan] Developer baru saja merubah status temuan produk NusantaraX.</div>
                     <div style="color: var(--text-muted); font-size: 0.75rem; display: flex; align-items: center; gap: 0.3rem;">
                         <i class="ph ph-clock"></i> 25 Juni 2025 - 07:55
                     </div>
                 </div>
 
                 <!-- Item 2 -->
-                <div style="border: 1px solid var(--border-color); border-left: 4px solid var(--len-red); border-radius: 8px; padding: 1rem; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
-                    <div style="font-weight: 600; font-size: 0.85rem; margin-bottom: 0.5rem; line-height: 1.4;">[Tabel Perbaikan] Developer baru saja merubah status temuan produk NusantaraX.</div>
+                <div style="border: 1px solid var(--border-color); border-left: 4px solid var(--len-red); border-radius: 8px; padding: 1rem;">
+                    <div style="font-weight: 600; font-size: 0.85rem; margin-bottom: 0.5rem; line-height: 1.4; color: var(--text-main);">[Tabel Perbaikan] Developer baru saja merubah status temuan produk NusantaraX.</div>
                     <div style="color: var(--text-muted); font-size: 0.75rem; display: flex; align-items: center; gap: 0.3rem;">
                         <i class="ph ph-clock"></i> 25 Juni 2025 - 07:55
                     </div>
                 </div>
 
                 <!-- Item 3 -->
-                <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
-                    <div style="font-weight: 600; font-size: 0.85rem; margin-bottom: 0.5rem; line-height: 1.4;">[Tabel Perbaikan] Developer baru saja merubah status temuan produk 123 Makmur Jaya.</div>
+                <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem;">
+                    <div style="font-weight: 600; font-size: 0.85rem; margin-bottom: 0.5rem; line-height: 1.4; color: var(--text-main);">[Tabel Perbaikan] Developer baru saja merubah status temuan produk 123 Makmur Jaya.</div>
                     <div style="color: var(--text-muted); font-size: 0.75rem; display: flex; align-items: center; gap: 0.3rem;">
                         <i class="ph ph-clock"></i> 26 Desember 2024 - 09:24
                     </div>
                 </div>
 
                  <!-- Item 4 -->
-                 <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
-                    <div style="font-weight: 600; font-size: 0.85rem; margin-bottom: 0.5rem; line-height: 1.4;">[Tabel Perbaikan] Developer baru saja merubah status temuan produk Alpha.</div>
+                 <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem;">
+                    <div style="font-weight: 600; font-size: 0.85rem; margin-bottom: 0.5rem; line-height: 1.4; color: var(--text-main);">[Tabel Perbaikan] Developer baru saja merubah status temuan produk Alpha.</div>
                     <div style="color: var(--text-muted); font-size: 0.75rem; display: flex; align-items: center; gap: 0.3rem;">
                         <i class="ph ph-clock"></i> 20 Januari 2024 - 11:15
                     </div>
@@ -337,10 +324,10 @@
                     <div style="border: 1px solid var(--border-color); border-radius: 12px; padding: 1.25rem; display: flex; flex-direction: column; gap: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
                         <div class="flex-between" style="align-items: flex-start;">
                             <div>
-                                <div style="font-weight: 600; font-size: 1.1rem; margin-bottom: 0.25rem;">Antares</div>
+                                <div style="font-weight: 600; font-size: 1.1rem; margin-bottom: 0.25rem; color: var(--text-main);">Antares</div>
                                 <div style="font-size: 0.85rem; color: var(--text-muted);">Usability Testing</div>
                             </div>
-                            <span style="background: #FFFBEB; border: 1px solid #FEF3C7; color: #D97706; padding: 0.3rem 0.8rem; border-radius: 50px; font-size: 0.7rem; font-weight: 600;">Pengujian Produk</span>
+                            <span style="background: var(--warning-bg); border: 1px solid rgba(245,158,11,0.3); color: var(--warning); padding: 0.3rem 0.8rem; border-radius: 50px; font-size: 0.7rem; font-weight: 600;">Pengujian Produk</span>
                         </div>
                         <div style="font-size: 0.85rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem;">
                             <i class="ph ph-calendar-blank" style="font-size: 1.1rem; color: var(--text-main);"></i> 20 Mei - 02 Juli 2026

@@ -8,6 +8,14 @@
     <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     
+    <!-- Apply saved theme IMMEDIATELY before render to avoid flash -->
+    <script>
+        (function() {
+            var t = localStorage.getItem('theme');
+            if (t) document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <!-- Chart.js -->
@@ -46,6 +54,11 @@
             <a href="/dashboard" class="nav-item {{ request()->is('dashboard') ? 'active' : '' }}">
                 <i class="ph ph-squares-four"></i>
                 Dashboard
+            </a>
+
+            <a href="/procurement" class="nav-item {{ request()->is('procurement') ? 'active' : '' }}">
+                <i class="ph ph-shopping-cart"></i>
+                Procurement
             </a>
 
             <div class="nav-item nav-dropdown {{ request()->is('master-data/*') ? 'active' : '' }}" onclick="toggleDropdown(this)">

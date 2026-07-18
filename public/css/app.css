@@ -28,15 +28,16 @@
 :root[data-theme="dark"] {
     --bg-color: #0F172A;
     --sidebar-bg: #1E293B;
-    --text-main: #F8FAFC;
+    --text-main: #F1F5F9;
     --text-muted: #94A3B8;
     --border-color: #334155;
     --card-bg: #1E293B;
-    --success-bg: rgba(16, 185, 129, 0.15);
-    --warning-bg: rgba(245, 158, 11, 0.15);
-    --danger-bg: rgba(239, 68, 68, 0.15);
+    --success-bg: rgba(16, 185, 129, 0.2);
+    --warning-bg: rgba(245, 158, 11, 0.2);
+    --danger-bg: rgba(239, 68, 68, 0.2);
     --len-red-light: rgba(227, 24, 55, 0.15);
-    /* len-red variables stay the same for brand consistency */
+    --input-bg: #0F172A;
+    --hover-bg: rgba(255,255,255,0.05);
 }
 
 /* Dark mode overrides for mini-sticky */
@@ -389,7 +390,8 @@ body {
 .badge-success { background-color: var(--success-bg); color: var(--success); }
 .badge-warning { background-color: var(--warning-bg); color: var(--warning); }
 .badge-danger { background-color: var(--danger-bg); color: var(--danger); }
-.badge-primary { background-color: #DBEAFE; color: var(--primary); }
+.badge-primary { background-color: rgba(37,99,235,0.15); color: #60A5FA; }
+:root:not([data-theme="dark"]) .badge-primary { background-color: #DBEAFE; color: #2563EB; }
 .badge-negative { background-color: var(--danger-bg); color: var(--danger); border: 1px solid var(--danger); }
 .badge-positive { background-color: var(--success-bg); color: var(--success); border: 1px solid var(--success); }
 
@@ -450,7 +452,7 @@ tbody tr {
 }
 
 tbody tr:hover {
-    background-color: #F8FAFC;
+    background-color: var(--hover-bg, #F8FAFC);
 }
 
 tbody tr:last-child {
@@ -548,11 +550,16 @@ tbody tr:last-child {
     font-size: 1.5rem;
 }
 
-.icon-box.blue { background-color: #DBEAFE; color: #2563EB; }
-.icon-box.green { background-color: #D1FAE5; color: #059669; }
-.icon-box.yellow { background-color: #FEF3C7; color: #D97706; }
+.icon-box.blue { background-color: rgba(37, 99, 235, 0.15); color: #60A5FA; }
+.icon-box.green { background-color: rgba(16, 185, 129, 0.15); color: #34D399; }
+.icon-box.yellow { background-color: rgba(245, 158, 11, 0.15); color: #FCD34D; }
 .icon-box.red { background-color: var(--len-red-light); color: var(--len-red); }
 .icon-box.white { background-color: rgba(255,255,255,0.2); color: white; }
+
+/* Keep light-mode icon colors on light */
+:root:not([data-theme="dark"]) .icon-box.blue { background-color: #DBEAFE; color: #2563EB; }
+:root:not([data-theme="dark"]) .icon-box.green { background-color: #D1FAE5; color: #059669; }
+:root:not([data-theme="dark"]) .icon-box.yellow { background-color: #FEF3C7; color: #D97706; }
 
 .progress-circle {
     width: 64px;
@@ -640,7 +647,8 @@ tbody tr:last-child {
     font-size: 0.875rem;
     width: 250px;
     background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%2364748B" viewBox="0 0 256 256"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path></svg>') no-repeat 0.75rem center;
-    background-color: white;
+    background-color: var(--card-bg);
+    color: var(--text-main);
 }
 
 /* Risk Matrix styles */
@@ -826,11 +834,11 @@ tbody tr:last-child {
 .sticky-note .note-list li {
     padding: 0.5rem 0;
     font-size: 0.9rem;
-    color: #4A5568;
+    color: var(--text-main);
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    border-bottom: 1px dashed rgba(0, 0, 0, 0.08);
+    border-bottom: 1px dashed var(--border-color);
     transition: padding-left 0.2s ease;
 }
 
@@ -938,13 +946,13 @@ tbody tr:last-child {
 .modal-header h3 { margin: 0; }
 .close-modal { cursor: pointer; font-size: 1.5rem; color: var(--text-muted); }
 .form-group { margin-bottom: 1rem; }
-.form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+.form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-main); }
 .form-control {
     width: 100%;
     padding: 0.5rem;
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
-    background: var(--bg-color);
+    background: var(--card-bg);
     color: var(--text-main);
 }
 
@@ -1069,22 +1077,28 @@ tbody tr:last-child {
 /* Table body */
 table.dataTable tbody tr {
     background-color: transparent;
+    color: var(--text-main);
 }
 table.dataTable tbody tr:hover {
     background-color: #FEF2F2 !important;
 }
 :root[data-theme="dark"] table.dataTable tbody tr:hover {
-    background-color: #1E293B !important;
+    background-color: rgba(255,255,255,0.04) !important;
 }
 table.dataTable tbody td {
     padding: 0.85rem 1rem;
     font-size: 0.9rem;
     vertical-align: middle;
     border-bottom: 1px solid var(--border-color);
+    color: var(--text-main);
 }
-:root[data-theme="dark"] table.dataTable tbody td,
-:root[data-theme="dark"] table.dataTable tbody td * {
-    color: #F8FAFC !important;
+:root[data-theme="dark"] table.dataTable tbody td {
+    color: #F1F5F9 !important;
+}
+:root[data-theme="dark"] table.dataTable tbody td span,
+:root[data-theme="dark"] table.dataTable tbody td div,
+:root[data-theme="dark"] table.dataTable tbody td a {
+    color: inherit;
 }
 table.dataTable.no-footer {
     border-bottom: none;
@@ -1242,5 +1256,141 @@ table.dataTable thead .sorting_desc::after {
     gap: 0.4rem;
     margin-bottom: 0.5rem;
     font-weight: 600;
-    color: var(--text-dark);
+    color: var(--text-main);
+}
+
+/* ==========================================
+   Global Dark Mode Fixes
+   ========================================== */
+/* Ensure all text-bearing elements respect dark mode */
+:root[data-theme="dark"] h1,
+:root[data-theme="dark"] h2,
+:root[data-theme="dark"] h3,
+:root[data-theme="dark"] h4,
+:root[data-theme="dark"] p,
+:root[data-theme="dark"] span:not(.badge):not([style*="color"]),
+:root[data-theme="dark"] label,
+:root[data-theme="dark"] div:not([style*="color"]) {
+    color: inherit;
+}
+
+/* Force card and container text to be visible */
+:root[data-theme="dark"] .card {
+    color: var(--text-main);
+}
+
+/* Fix DataTables wrapper dark mode */
+:root[data-theme="dark"] .dataTables_wrapper {
+    background: var(--card-bg);
+    color: var(--text-main);
+}
+:root[data-theme="dark"] .dataTables_wrapper .dataTables_info,
+:root[data-theme="dark"] .dataTables_wrapper .dataTables_length label,
+:root[data-theme="dark"] .dataTables_wrapper .dataTables_filter label {
+    color: var(--text-main);
+}
+:root[data-theme="dark"] .dataTables_wrapper .dataTables_length select,
+:root[data-theme="dark"] .dataTables_wrapper .dataTables_filter input {
+    background: var(--bg-color);
+    color: var(--text-main);
+    border-color: var(--border-color);
+}
+
+/* Fix pagination in dark mode */
+:root[data-theme="dark"] .dataTables_wrapper .dataTables_paginate .paginate_button {
+    background: var(--card-bg) !important;
+    color: var(--text-main) !important;
+    border-color: var(--border-color) !important;
+}
+:root[data-theme="dark"] .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: rgba(227,24,55,0.15) !important;
+    color: var(--len-red) !important;
+    border-color: var(--len-red) !important;
+}
+
+/* Fix export buttons in dark mode */
+:root[data-theme="dark"] .dt-btn {
+    background: var(--card-bg) !important;
+    color: var(--text-main) !important;
+    border-color: var(--border-color) !important;
+}
+
+/* Fix issue/info cards in dashboard */
+:root[data-theme="dark"] [style*="background: #FFFBEB"],
+:root[data-theme="dark"] [style*="background:#FFFBEB"] {
+    background: rgba(245, 158, 11, 0.15) !important;
+    color: #FCD34D !important;
+}
+
+/* Fix hardcoded white backgrounds */
+:root[data-theme="dark"] [style*="background: white"],
+:root[data-theme="dark"] [style*="background:white"],
+:root[data-theme="dark"] [style*="background: #ffffff"],
+:root[data-theme="dark"] [style*="background: #fff"] {
+    background: var(--card-bg) !important;
+}
+
+/* Fix hardcoded dark text colors */
+:root[data-theme="dark"] [style*="color: #1"],
+:root[data-theme="dark"] [style*="color: #0"],
+:root[data-theme="dark"] [style*="color:#1e"],
+:root[data-theme="dark"] [style*="color: #1e293b"],
+:root[data-theme="dark"] [style*="color: #334155"] {
+    color: var(--text-main) !important;
+}
+
+/* Dashboard stat cards */
+:root[data-theme="dark"] .stat-value {
+    color: var(--text-main);
+}
+:root[data-theme="dark"] .stat-label {
+    color: var(--text-muted);
+}
+
+/* Calendar day cells */
+:root[data-theme="dark"] .cal-day {
+    color: var(--text-main);
+}
+
+/* Fix border styles */
+:root[data-theme="dark"] [style*="border: 1px solid var(--border-color)"] {
+    border-color: var(--border-color) !important;
+}
+
+/* Fix sticky note text */
+:root[data-theme="dark"] .sticky-note {
+    background: rgba(30, 41, 59, 0.8) !important;
+    border-left-color: currentColor;
+}
+:root[data-theme="dark"] .sticky-note.warm-cream {
+    background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(245,158,11,0.06)) !important;
+    border-left-color: #F59E0B !important;
+}
+:root[data-theme="dark"] .sticky-note.soft-rose {
+    background: linear-gradient(135deg, rgba(227,24,55,0.12), rgba(227,24,55,0.06)) !important;
+    border-left-color: var(--len-red) !important;
+}
+:root[data-theme="dark"] .sticky-note.mint-green {
+    background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(16,185,129,0.06)) !important;
+    border-left-color: var(--success) !important;
+}
+:root[data-theme="dark"] .sticky-note.sky-blue {
+    background: linear-gradient(135deg, rgba(37,99,235,0.12), rgba(37,99,235,0.06)) !important;
+    border-left-color: #60A5FA !important;
+}
+:root[data-theme="dark"] .sticky-note.lavender {
+    background: linear-gradient(135deg, rgba(124,58,237,0.12), rgba(124,58,237,0.06)) !important;
+    border-left-color: #A78BFA !important;
+}
+:root[data-theme="dark"] .sticky-note .note-list li {
+    color: var(--text-main) !important;
+    border-bottom-color: var(--border-color);
+}
+
+/* Fix mini-sticky in dark mode */
+:root[data-theme="dark"] .mini-sticky {
+    color: var(--text-main) !important;
+}
+:root[data-theme="dark"] .mini-sticky p {
+    color: var(--text-muted) !important;
 }
